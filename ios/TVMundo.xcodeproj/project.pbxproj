@@ -1,0 +1,300 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		87EB77B931E7732FC2D17944 /* TVMundoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87F58381455E8AB5272EC482 /* TVMundoApp.swift */; };
+		B4D9265F79FA38F6F5896A2A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EED8A2ED0BAE0359DC140A /* ContentView.swift */; };
+		E6925E8F7003D6866D98DF23 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98780A6BD3E83D7B50E0B3BD /* WebView.swift */; };
+		7EB6369CFD4DFAC31AB08E47 /* WebViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9EC146D0688CA37B1D8A33 /* WebViewModel.swift */; };
+		D9B442CEF9034C7C5128BD14 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE13B7AD1EAB2B3512C5B2 /* NetworkMonitor.swift */; };
+		D9E1BC20D1AF7F0AC48C0A35 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4220AB78803A6B156AB6C28F /* LoadingView.swift */; };
+		BDF0B84E7955F8FB0E461EF4 /* OfflineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060522036DCD8806A8B02470 /* OfflineView.swift */; };
+		30871166680E52097765E99E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9A1EFDECF13DB0678CCC4DC /* Assets.xcassets */; };
+		FAEA4ECE9B87A7729FAB8AD0 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 0FABAA7DC988D63E94F670A8 /* Web */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F5BF48AA40CAD7891EB709FC /* TVMundo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TVMundo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		87F58381455E8AB5272EC482 /* TVMundoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVMundoApp.swift; sourceTree = "<group>"; };
+		B5EED8A2ED0BAE0359DC140A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		98780A6BD3E83D7B50E0B3BD /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		ED9EC146D0688CA37B1D8A33 /* WebViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewModel.swift; sourceTree = "<group>"; };
+		9DBE13B7AD1EAB2B3512C5B2 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		4220AB78803A6B156AB6C28F /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		060522036DCD8806A8B02470 /* OfflineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineView.swift; sourceTree = "<group>"; };
+		E9A1EFDECF13DB0678CCC4DC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0FABAA7DC988D63E94F670A8 /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
+		CBC1A6187DDFEBB71FC440A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		23D4D8A1A691152DF04FD401 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4C217B7E49CE4218A745107D = {
+			isa = PBXGroup;
+			children = (
+				28A0636017AEEB61BCDA9D56 /* TVMundo */,
+				1DEFA2DBDC9661815A95F2D4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		28A0636017AEEB61BCDA9D56 /* TVMundo */ = {
+			isa = PBXGroup;
+			children = (
+				87F58381455E8AB5272EC482 /* TVMundoApp.swift */,
+				B5EED8A2ED0BAE0359DC140A /* ContentView.swift */,
+				98780A6BD3E83D7B50E0B3BD /* WebView.swift */,
+				ED9EC146D0688CA37B1D8A33 /* WebViewModel.swift */,
+				9DBE13B7AD1EAB2B3512C5B2 /* NetworkMonitor.swift */,
+				4220AB78803A6B156AB6C28F /* LoadingView.swift */,
+				060522036DCD8806A8B02470 /* OfflineView.swift */,
+				E9A1EFDECF13DB0678CCC4DC /* Assets.xcassets */,
+				0FABAA7DC988D63E94F670A8 /* Web */,
+				CBC1A6187DDFEBB71FC440A0 /* Info.plist */,
+			);
+			path = TVMundo;
+			sourceTree = "<group>";
+		};
+		1DEFA2DBDC9661815A95F2D4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F5BF48AA40CAD7891EB709FC /* TVMundo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		42AEFBAE01D2DFD981F7DA7D /* TVMundo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 477DE7A21D855BA1F4EBD94D /* Build configuration list for PBXNativeTarget "TVMundo" */;
+			buildPhases = (
+				84E2FD34901EE2948D11C7BA /* Sources */,
+				23D4D8A1A691152DF04FD401 /* Frameworks */,
+				A95D68C222F00292802D0988 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TVMundo;
+			productName = TVMundo;
+			productReference = F5BF48AA40CAD7891EB709FC /* TVMundo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					42AEFBAE01D2DFD981F7DA7D = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A7492CCDE30BE8F54F16B52E /* Build configuration list for PBXProject "TVMundo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = es;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				es,
+				Base,
+			);
+			mainGroup = 4C217B7E49CE4218A745107D;
+			productRefGroup = 1DEFA2DBDC9661815A95F2D4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				42AEFBAE01D2DFD981F7DA7D /* TVMundo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A95D68C222F00292802D0988 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30871166680E52097765E99E /* Assets.xcassets in Resources */,
+				FAEA4ECE9B87A7729FAB8AD0 /* Web in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		84E2FD34901EE2948D11C7BA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				87EB77B931E7732FC2D17944 /* TVMundoApp.swift in Sources */,
+				B4D9265F79FA38F6F5896A2A /* ContentView.swift in Sources */,
+				E6925E8F7003D6866D98DF23 /* WebView.swift in Sources */,
+				7EB6369CFD4DFAC31AB08E47 /* WebViewModel.swift in Sources */,
+				D9B442CEF9034C7C5128BD14 /* NetworkMonitor.swift in Sources */,
+				D9E1BC20D1AF7F0AC48C0A35 /* LoadingView.swift in Sources */,
+				BDF0B84E7955F8FB0E461EF4 /* OfflineView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		887A5C7011C9BCE00F732710 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				SDKROOT = iphoneos;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		424492294FC90F3B1A875595 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				SDKROOT = iphoneos;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4B31FC737F45AD4B4E86B0FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "TVMundo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wilsonzelaya.tvmundo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		715FB83D92EC3BF822F73DCE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "TVMundo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wilsonzelaya.tvmundo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A7492CCDE30BE8F54F16B52E /* Build configuration list for PBXProject "TVMundo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				887A5C7011C9BCE00F732710 /* Debug */,
+				424492294FC90F3B1A875595 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		477DE7A21D855BA1F4EBD94D /* Build configuration list for PBXNativeTarget "TVMundo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B31FC737F45AD4B4E86B0FC /* Debug */,
+				715FB83D92EC3BF822F73DCE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+}
