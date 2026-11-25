@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0f15">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TV Mundo">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>TV Mundo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
+<style>
+:root{--bg:#0b0f15;--p1:#141a23;--p2:#1c2430;--line:#283141;--ink:#eef2f7;--mute:#8d98a8;--acc:#35B7A3;--hot:#EA6857;--nav:64px;--st:env(safe-area-inset-top);--sb:env(safe-area-inset-bottom)}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Roboto,system-ui,sans-serif;overscroll-behavior-y:contain}
+body{padding-top:var(--st);padding-bottom:calc(var(--nav) + var(--sb))}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+h1,h2,h3{font-family:Poppins,sans-serif;margin:0;line-height:1.15}
+.hide{display:none!important}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:10px;padding:12px 16px 8px}
+.logo{font:700 21px Poppins,sans-serif}.logo span{color:var(--acc)}
+.src{margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--p2);border:1px solid var(--line);border-radius:22px;padding:0 14px;min-height:40px;font-size:14px;max-width:60%}
+.src b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+
+/* player */
+.player{position:sticky;top:0;z-index:20;background:var(--bg);padding:0 0 8px}
+.tv{position:relative;aspect-ratio:16/9;background:#000;max-height:46vh;width:100%;margin:auto;touch-action:pan-y}
+video{width:100%;height:100%;display:block;background:#000}
+.ovl{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:#cfd6df;pointer-events:none;background:rgba(0,0,0,.45);font-size:14px}
+.chnum{position:absolute;top:10px;left:12px;font:700 26px Poppins;color:#fff;text-shadow:0 2px 8px #000;pointer-events:none;opacity:0;transition:opacity .3s}
+.chnum.show{opacity:1}
+.pbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:10px 14px 0}
+.pbar .ib{flex:1 1 0;max-width:72px;height:40px}
+.pbar img,.pbar .ph{width:42px;height:42px}
+.pbar .t{flex:1 1 calc(100% - 60px)}
+.pbar b{display:block;font:600 16px Poppins;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pbar small{color:var(--mute)}
+.ib{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--p2);border:1px solid var(--line);flex:none}
+.ib svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ib.on{color:#f5c84c}
+.live{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--hot)}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--hot);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.3}}
+@media(prefers-reduced-motion:reduce){.live::before{animation:none}}
+
+/* logos */
+.lg,.ph{flex:none;width:46px;height:46px;border-radius:10px;object-fit:contain;background:#fff;padding:3px}
+.ph{background:var(--p2);display:grid;place-items:center;font:700 18px Poppins;color:var(--mute);padding:0}
+
+/* screens */
+.screen{padding:4px 0 20px}
+.sec{margin:18px 0 6px}
+.sech{display:flex;align-items:baseline;justify-content:space-between;padding:0 16px 8px}
+.sech h2{font-size:18px}
+.sech button{color:var(--acc);font-size:14px;min-height:36px}
+.row{display:flex;gap:10px;overflow-x:auto;padding:0 16px 6px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.row::-webkit-scrollbar{display:none}
+.card{flex:none;width:128px;scroll-snap-align:start;background:var(--p1);border:1px solid var(--line);border-radius:14px;padding:10px;text-align:left}
+.card .lgw{height:70px;border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden;margin-bottom:8px}
+.card .lgw img{max-width:90%;max-height:62px;object-fit:contain}
+.card .lgw.n{background:var(--p2);font:700 28px Poppins;color:var(--mute)}
+.card b{display:block;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card small{color:var(--mute);font-size:12px}
+.card.act{border-color:var(--acc)}
+.hero{margin:6px 16px 0;padding:18px;border-radius:18px;background:linear-gradient(135deg,#167234,#35B7A3);color:#fff}
+.hero h1{font-size:24px}
+.hero p{margin:6px 0 14px;opacity:.9;font-size:14px}
+.hero button{background:#fff;color:#0b3a22;font-weight:500;border-radius:22px;padding:0 18px;min-height:44px}
+
+/* chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;min-height:38px;padding:0 14px;border-radius:20px;background:var(--p2);border:1px solid var(--line);font-size:14px;white-space:nowrap}
+.chip.on{background:var(--acc);color:#04201b;border-color:var(--acc);font-weight:500}
+.search{margin:4px 16px 0;display:flex;align-items:center;gap:8px;background:var(--p1);border:1px solid var(--line);border-radius:12px;padding:0 12px}
+.search input{flex:1;background:none;border:0;min-height:46px;font-size:16px;outline:none}
+.search svg{width:18px;height:18px;stroke:var(--mute);fill:none;stroke-width:2}
+
+/* guide list */
+.glist{list-style:none;margin:0;padding:0 8px}
+.gi{display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;cursor:pointer}
+.gi:active,.gi:hover{background:var(--p1)}
+.gi.act{background:var(--p2);box-shadow:inset 3px 0 0 var(--acc)}
+.gi .n{width:38px;text-align:right;font:600 15px Poppins;color:var(--mute);flex:none;font-variant-numeric:tabular-nums}
+.gi .t{flex:1;overflow:hidden}
+.gi .t b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gi .t small{color:var(--mute);font-size:12px}
+.gi .fv{width:40px;height:40px;font-size:20px;color:var(--mute)}
+.gi .fv.on{color:#f5c84c}
+.count{color:var(--mute);font-size:13px;padding:6px 16px}
+.more{display:block;margin:10px auto;padding:0 22px;min-height:44px;border-radius:22px;background:var(--p2);border:1px solid var(--line)}
+.empty{padding:40px 24px;text-align:center;color:var(--mute)}
+
+/* explore tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:0 16px}
+.tile{min-height:82px;border-radius:16px;padding:14px;text-align:left;font:600 16px Poppins;color:#fff;position:relative;overflow:hidden}
+.tile small{display:block;font:400 12px Roboto;opacity:.85;margin-top:4px}
+.tile::after{content:"";position:absolute;right:-18px;bottom:-18px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.14)}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:0 16px}
+.pl{min-height:46px;border-radius:12px;background:var(--p1);border:1px solid var(--line);text-align:left;padding:0 12px;font-size:14px}
+.pl.on{border-color:var(--acc);color:var(--acc)}
+
+/* bottom nav */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:30;height:calc(var(--nav) + var(--sb));padding-bottom:var(--sb);display:grid;grid-template-columns:repeat(4,1fr);background:rgba(17,22,30,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--mute)}
+nav svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav .on{color:var(--acc)}
+
+/* sheet */
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:flex;align-items:flex-end}
+.sheet>div{background:var(--p1);width:100%;max-height:80vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:16px 0 calc(16px + var(--sb))}
+.sheet h3{padding:0 16px 10px;font-size:18px}
+.toast{position:fixed;left:50%;bottom:calc(var(--nav) + var(--sb) + 14px);transform:translateX(-50%);background:#fff;color:#111;padding:10px 16px;border-radius:22px;font-size:14px;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:90vw;text-align:center}
+.note{color:var(--mute);font-size:12px;padding:16px}
+
+@media(min-width:900px){
+  body{padding-bottom:0;padding-left:88px}
+  nav{top:0;right:auto;width:88px;height:auto;grid-template-columns:1fr;grid-auto-rows:80px;align-content:center;border-top:0;border-right:1px solid var(--line)}
+  .app{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}
+  .player{position:sticky;top:0;padding:16px}.tv{border-radius:16px;overflow:hidden;max-height:none}
+  .player.hide{display:block!important}
+  .toast{bottom:20px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">TV <span>Mundo</span></div>
+  <button class="src" id="srcBtn" aria-label="Cambiar fuente de canales">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+    <b id="srcName">Canales en español</b>
+  </button>
+</header>
+
+<div class="app">
+<section class="player hide" id="player">
+  <div class="tv" id="tv">
+    <video id="v" controls playsinline></video>
+    <div class="ovl" id="ovl">Elige un canal</div>
+    <div class="chnum" id="chnum"></div>
+  </div>
+  <div class="pbar" id="pbar"></div>
+</section>
+
+<main>
+  <!-- INICIO -->
+  <section class="screen" id="s-home">
+    <div class="hero" id="hero">
+      <h1>Televisión en vivo, gratis</h1>
+      <p id="heroTxt">Cargando canales…</p>
+      <button id="heroBtn">Ver la guía</button>
+    </div>
+    <div id="homeRows"></div>
+  </section>
+
+  <!-- GUÍA -->
+  <section class="screen hide" id="s-guide">
+    <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Buscar canal o número" aria-label="Buscar"></div>
+    <div class="chips" id="chips"></div>
+    <div class="count" id="count"></div>
+    <ul class="glist" id="glist"></ul>
+    <button class="more hide" id="more">Mostrar más canales</button>
+  </section>
+
+  <!-- EXPLORAR -->
+  <section class="screen hide" id="s-explore">
+    <div class="sec"><div class="sech"><h2>Categorías del mundo</h2></div><div class="tiles" id="catTiles"></div></div>
+    <div class="sec"><div class="sech"><h2>Regiones</h2></div><div class="plist" id="regList"></div></div>
+    <div class="sec"><div class="sech"><h2>Países</h2></div><div class="plist" id="ctyList"></div></div>
+    <div class="sec"><div class="sech"><h2>Idiomas</h2></div><div class="plist" id="lngList"></div></div>
+  </section>
+
+  <!-- MIS CANALES -->
+  <section class="screen hide" id="s-mine">
+    <div class="sec"><div class="sech"><h2>Favoritos</h2></div><ul class="glist" id="favList"></ul></div>
+    <div class="sec"><div class="sech"><h2>Vistos recientemente</h2><button id="clrRec">Borrar</button></div><ul class="glist" id="recList"></ul></div>
+    <p class="note">Canales públicos y gratuitos de la lista abierta iptv-org. Algunos pueden estar caídos o bloqueados en tu región; si uno no carga, desliza sobre el video o usa siguiente.</p>
+  </section>
+</main>
+</div>
+
+<nav id="nav">
+  <button data-s="home" class="on"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
+  <button data-s="guide"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg>Guía</button>
+  <button data-s="explore"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Explorar</button>
+  <button data-s="mine"><svg viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>Mis canales</button>
+</nav>
+
+<div class="sheet hide" id="sheet"><div id="sheetIn"></div></div>
+<div class="toast hide" id="toast"></div>
+
+<script>
+{
+const BASE="https://iptv-org.github.io/iptv/";
+const CATS=[["news","Noticias","#c0392b"],["sports","Deportes","#167234"],["movies","Películas","#6c3483"],["series","Series","#8e44ad"],["kids","Infantil","#e67e22"],["animation","Animación","#d35400"],["music","Música","#EA6857"],["entertainment","Entretenimiento","#1f6feb"],["documentary","Documentales","#7d6608"],["culture","Cultura","#a04000"],["education","Educación","#117a65"],["science","Ciencia","#1a5276"],["religious","Religioso","#5d6d7e"],["comedy","Comedia","#b9770e"],["cooking","Cocina","#a93226"],["lifestyle","Estilo de vida","#c2185b"],["travel","Viajes","#0e6655"],["outdoor","Aire libre","#196f3d"],["auto","Motor","#424949"],["business","Negocios","#21618c"],["weather","Clima","#2874a6"],["classic","Clásicos","#6e2c00"],["family","Familia","#af601a"],["legislative","Legislativo","#4a235a"],["public","Pública","#1b4f72"],["shop","Compras","#7b241c"],["general","General","#35B7A3"],["relax","Relax","#48c9b0"],["undefined","Otros","#566573"]];
+const CAT=Object.fromEntries(CATS.map(c=>[c[0],c]));
+const REGIONS=[["cenamer","Centroamérica"],["hispam","Hispanoamérica"],["latam","Latinoamérica"],["carib","Caribe"],["noram","Norteamérica"],["eur","Europa"],["asia","Asia"],["afr","África"],["arab","Mundo árabe"],["mideast","Medio Oriente"]];
+const COUNTRIES=[["hn","Honduras"],["gt","Guatemala"],["sv","El Salvador"],["ni","Nicaragua"],["cr","Costa Rica"],["pa","Panamá"],["mx","México"],["us","Estados Unidos"],["ca","Canadá"],["cu","Cuba"],["do","Rep. Dominicana"],["pr","Puerto Rico"],["co","Colombia"],["ve","Venezuela"],["ec","Ecuador"],["pe","Perú"],["bo","Bolivia"],["cl","Chile"],["ar","Argentina"],["uy","Uruguay"],["py","Paraguay"],["br","Brasil"],["es","España"],["pt","Portugal"],["fr","Francia"],["it","Italia"],["de","Alemania"],["uk","Reino Unido"],["nl","Países Bajos"],["ch","Suiza"],["se","Suecia"],["pl","Polonia"],["gr","Grecia"],["tr","Turquía"],["ru","Rusia"],["il","Israel"],["ae","Emiratos Árabes"],["eg","Egipto"],["ma","Marruecos"],["ng","Nigeria"],["za","Sudáfrica"],["in","India"],["cn","China"],["jp","Japón"],["kr","Corea del Sur"],["ph","Filipinas"],["id","Indonesia"],["au","Australia"]];
+const LANGS=[["spa","Español"],["eng","Inglés"],["por","Portugués"],["fra","Francés"],["ita","Italiano"],["deu","Alemán"],["ara","Árabe"],["zho","Chino"],["jpn","Japonés"],["rus","Ruso"]];
+const DEF={type:"languages",code:"spa",name:"Canales en español"};
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store={get(k,d){try{const x=JSON.parse(localStorage.getItem(k));return x??d}catch(e){return d}},set(k,x){try{localStorage.setItem(k,JSON.stringify(x))}catch(e){}}};
+const HTTPS=location.protocol==="https:";
+const v=$("v"),ovl=$("ovl");
+
+let src=store.get("tvm-src",DEF),all=[],favs=store.get("tvm-favs",[]),recs=store.get("tvm-recs",[]);
+let gCat="",gLimit=80,gView=[],cur=null,hls=null,screen="home",playCtx=[],tmr=0;
+
+const catName=g=>(CAT[g]||[0,g])[1];
+const catOf=c=>c.cats[0]||"undefined";
+const sub=c=>esc(catName(catOf(c)))+(c.cc?" · "+esc(c.cc.toUpperCase()):"");
+const logo=(c,cls="lg")=>c.logo?`<img class="${cls}" src="${esc(c.logo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ph',textContent:this.alt||'·'}))">`:`<span class="ph">${esc((c.name[0]||"?").toUpperCase())}</span>`;
+const isFav=c=>favs.some(f=>f.url===c.url);
+function toast(t){const e=$("toast");e.textContent=t;e.classList.remove("hide");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.add("hide"),2600)}
+
+/* ---------- datos ---------- */
+function parseM3U(txt){
+  const out=[];let m=null;
+  for(const raw of txt.split(/\r?\n/)){
+    const l=raw.trim();
+    if(l.startsWith("#EXTINF")){
+      const a=k=>(l.match(new RegExp(k+'="([^"]*)"'))||[])[1]||"";
+      const id=a("tvg-id");
+      const cc=(id.match(/\.([a-z]{2})(@|$)/i)||[])[1]||"";
+      m={name:l.slice(l.lastIndexOf('",')>0?l.lastIndexOf('",')+2:l.indexOf(",")+1).replace(/\s*\(\d+p\)|\s*\[[^\]]*\]/g,"").trim()||"Canal",
+         logo:a("tvg-logo"),cats:(a("group-title")||"Undefined").toLowerCase().split(";").map(s=>s.trim()).filter(Boolean),cc:cc.toLowerCase()};
+    }else if(m&&l&&!l.startsWith("#")){m.url=l;out.push(m);m=null}
+  }
+  const seen=new Set();
+  return out.filter(c=>{const k=c.name.toLowerCase();if(seen.has(k))return false;seen.add(k);return !(HTTPS&&c.url.startsWith("http:"))})
+            .filter(c=>!c.cats.includes("xxx"))
+            .sort((a,b)=>a.name.localeCompare(b.name,"es")).map((c,i)=>(c.num=i+1,c));
+}
+async function load(s){
+  src=s;store.set("tvm-src",s);$("srcName").textContent=s.name;
+  $("heroTxt").textContent="Cargando canales…";$("homeRows").innerHTML="";$("glist").innerHTML="";$("count").textContent="Cargando…";
+  try{
+    const r=await fetch(`${BASE}${s.type}/${s.code}.m3u`,{cache:"no-cache"});
+    if(!r.ok)throw 0;all=parseM3U(await r.text());
+  }catch(e){all=[];$("heroTxt").textContent="No se pudo cargar la lista. Revisa tu conexión a internet.";$("count").textContent="";return}
+  gCat="";gLimit=80;renderHome();renderGuide();
+}
+
+/* ---------- inicio ---------- */
+function cardRow(list){return list.map(c=>`<button class="card${cur&&cur.url===c.url?" act":""}" data-u="${esc(c.url)}">
+  <div class="lgw${c.logo?"":" n"}">${c.logo?`<img src="${esc(c.logo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:esc(c.name[0]||"?")}</div>
+  <b>${esc(c.name)}</b><small>${c.num?"Canal "+c.num:sub(c)}</small></button>`).join("")}
+function renderHome(){
+  $("heroTxt").textContent=all.length?`${all.length} canales en vivo · ${src.name}`:"No hay canales en esta selección.";
+  const groups={};for(const c of all)for(const g of c.cats)(groups[g]=groups[g]||[]).push(c);
+  const order=CATS.map(c=>c[0]).filter(g=>groups[g]&&g!=="undefined"&&g!=="general");
+  let h="";
+  if(recs.length)h+=sec("Seguir viendo","",recs.slice(0,15));
+  if(favs.length)h+=sec("Tus favoritos","",favs.slice(0,15));
+  if(groups.general)h+=sec("Canales generales","general",groups.general);
+  for(const g of order)h+=sec(catName(g),g,groups[g]);
+  $("homeRows").innerHTML=h;
+}
+function sec(title,g,list){
+  return `<div class="sec"><div class="sech"><h2>${esc(title)}</h2>${g!==""?`<button data-cat="${esc(g)}">Ver ${list.length} ›</button>`:""}</div><div class="row">${cardRow(list.slice(0,15))}</div></div>`;
+}
+
+/* ---------- guía ---------- */
+function renderChips(){
+  const cnt={};for(const c of all)for(const g of c.cats)cnt[g]=(cnt[g]||0)+1;
+  const keys=CATS.map(c=>c[0]).filter(g=>cnt[g]);
+  $("chips").innerHTML=`<button class="chip${gCat?"":" on"}" data-g="">Todos</button>`+keys.map(g=>`<button class="chip${gCat===g?" on":""}" data-g="${g}">${esc(catName(g))} ${cnt[g]}</button>`).join("");
+}
+function guideRow(c){
+  return `<li class="gi${cur&&cur.url===c.url?" act":""}" data-u="${esc(c.url)}"><span class="n">${c.num||""}</span>${logo(c)}
+  <span class="t"><b>${esc(c.name)}</b><small><span class="live">EN VIVO</span> · ${sub(c)}</small></span>
+  <button class="fv${isFav(c)?" on":""}" data-fav="${esc(c.url)}" aria-label="Favorito">${isFav(c)?"★":"☆"}</button></li>`;
+}
+function renderGuide(){
+  renderChips();
+  const q=$("q").value.trim().toLowerCase();
+  gView=all.filter(c=>(!gCat||c.cats.includes(gCat))&&(!q||c.name.toLowerCase().includes(q)||String(c.num)===q));
+  $("count").textContent=all.length?`${gView.length} canales${gCat?" · "+catName(gCat):""}`:"";
+  $("glist").innerHTML=gView.length?gView.slice(0,gLimit).map(guideRow).join(""):`<li class="empty">${all.length?"No hay canales con ese filtro.":""}</li>`;
+  $("more").classList.toggle("hide",gView.length<=gLimit);
+}
+
+/* ---------- explorar ---------- */
+function renderExplore(){
+  const on=(t,c)=>src.type===t&&src.code===c?" on":"";
+  $("catTiles").innerHTML=CATS.filter(c=>c[0]!=="undefined").map(([k,n,col])=>`<button class="tile" style="background:${col}" data-src="categories|${k}|${esc(n)} del mundo">${esc(n)}<small>Todo el mundo</small></button>`).join("");
+  $("regList").innerHTML=REGIONS.map(([k,n])=>`<button class="pl${on("regions",k)}" data-src="regions|${k}|${esc(n)}">${esc(n)}</button>`).join("");
+  $("ctyList").innerHTML=COUNTRIES.map(([k,n])=>`<button class="pl${on("countries",k)}" data-src="countries|${k}|${esc(n)}">${esc(n)}</button>`).join("");
+  $("lngList").innerHTML=LANGS.map(([k,n])=>`<button class="pl${on("languages",k)}" data-src="languages|${k}|Canales en ${esc(n.toLowerCase())}">${esc(n)}</button>`).join("");
+}
+
+/* ---------- mis canales ---------- */
+function renderMine(){
+  $("favList").innerHTML=favs.length?favs.map(guideRow).join(""):`<li class="empty">Toca ☆ en cualquier canal para guardarlo aquí.</li>`;
+  $("recList").innerHTML=recs.length?recs.map(guideRow).join(""):`<li class="empty">Aquí aparecerán los canales que veas.</li>`;
+}
+
+/* ---------- navegación ---------- */
+function go(s){
+  screen=s;for(const id of["home","guide","explore","mine"])$("s-"+id).classList.toggle("hide",id!==s);
+  for(const b of $("nav").children)b.classList.toggle("on",b.dataset.s===s);
+  if(s==="explore")renderExplore();if(s==="mine")renderMine();if(s==="guide")renderGuide();if(s==="home")renderHome();
+  try{window.scrollTo({top:0})}catch(e){}
+  store.set("tvm-screen",s);
+}
+
+/* ---------- reproductor ---------- */
+function findCh(u){return all.find(c=>c.url===u)||favs.find(c=>c.url===u)||recs.find(c=>c.url===u)}
+function play(c,ctx){
+  if(!c)return;cur=c;if(ctx)playCtx=ctx;
+  $("player").classList.remove("hide");
+  recs=[c,...recs.filter(r=>r.url!==c.url)].slice(0,30);store.set("tvm-recs",recs);
+  $("pbar").innerHTML=`${logo(c)}<div class="t"><b>${esc(c.name)}</b><small><span class="live">EN VIVO</span> · ${c.num?"Canal "+c.num+" · ":""}${sub(c)}</small></div>
+   <button class="ib" id="bPrev" aria-label="Canal anterior"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+   <button class="ib" id="bNext" aria-label="Canal siguiente"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+   <button class="ib${isFav(c)?" on":""}" id="bFav" aria-label="Favorito"><svg viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></button>
+   <button class="ib" id="bFull" aria-label="Pantalla completa"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+   <button class="ib" id="bClose" aria-label="Cerrar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`;
+  const n=$("chnum");n.textContent=c.num||"";n.classList.add("show");clearTimeout(play.n);play.n=setTimeout(()=>n.classList.remove("show"),2500);
+  ovl.textContent="Conectando con "+c.name+"…";ovl.classList.remove("hide");
+  if(hls){hls.destroy();hls=null}
+  v.removeAttribute("src");
+  const fail=()=>{if(cur!==c)return;ovl.classList.remove("hide");ovl.textContent="Este canal no está disponible ahora. Desliza o toca › para el siguiente."};
+  v.onplaying=()=>{ovl.classList.add("hide");clearTimeout(tmr)};v.onerror=fail;
+  if(window.Hls&&Hls.isSupported()&&!/\.(mp4|webm)(\?|$)/i.test(c.url)){
+    hls=new Hls({maxBufferLength:20,manifestLoadingTimeOut:12000});hls.loadSource(c.url);hls.attachMedia(v);
+    hls.on(Hls.Events.MANIFEST_PARSED,()=>v.play().catch(()=>{ovl.textContent="Toca ▶ para reproducir"}));
+    hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal)fail()});
+  }else{v.src=c.url;v.play().catch(()=>{})}
+  clearTimeout(tmr);tmr=setTimeout(()=>{if(v.paused&&!ovl.classList.contains("hide")&&ovl.textContent.startsWith("Conectando"))fail()},15000);
+  refreshActive();
+}
+function step(d){
+  const L=playCtx.length?playCtx:all;if(!L.length)return;
+  let i=cur?L.findIndex(c=>c.url===cur.url):-1;i=(i+d+L.length)%L.length;play(L[i]);
+}
+function refreshActive(){
+  document.querySelectorAll("[data-u]").forEach(e=>e.classList.toggle(e.classList.contains("card")?"act":"act",!!cur&&e.dataset.u===cur.url));
+}
+function toggleFav(c){
+  if(!c)return;if(isFav(c)){favs=favs.filter(f=>f.url!==c.url);toast("Quitado de favoritos")}else{favs=[...favs,c];toast("★ Guardado en favoritos")}
+  store.set("tvm-favs",favs);
+}
+function closePlayer(){if(hls){hls.destroy();hls=null}v.pause();v.removeAttribute("src");v.load();cur=null;$("player").classList.add("hide");refreshActive()}
+
+/* ---------- fuente (hoja) ---------- */
+function openSheet(){
+  const quick=[["languages","spa","Canales en español"],["regions","cenamer","Centroamérica"],["countries","hn","Honduras"],["regions","hispam","Hispanoamérica"],["categories","news","Noticias del mundo"],["categories","sports","Deportes del mundo"],["categories","movies","Películas del mundo"],["categories","kids","Infantil del mundo"]];
+  $("sheetIn").innerHTML=`<h3>¿Qué quieres ver?</h3><div class="plist">${quick.map(([t,k,n])=>`<button class="pl${src.type===t&&src.code===k?" on":""}" data-src="${t}|${k}|${esc(n)}">${esc(n)}</button>`).join("")}</div>
+   <p class="note">Más países, regiones e idiomas en la pestaña Explorar.</p><div class="plist"><button class="pl" data-go="explore">Ir a Explorar ›</button></div>`;
+  $("sheet").classList.remove("hide");
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener("click",e=>{
+  const t=e.target;
+  const fav=t.closest("[data-fav]");if(fav){e.stopPropagation();toggleFav(findCh(fav.dataset.fav));if(screen==="guide")renderGuide();else if(screen==="mine")renderMine();if(cur)$("bFav")?.classList.toggle("on",isFav(cur));return}
+  const s=t.closest("[data-src]");if(s){const[type,code,name]=s.dataset.src.split("|");$("sheet").classList.add("hide");gCat="";$("q").value="";load({type,code,name});go("guide");return}
+  const g=t.closest("[data-go]");if(g){$("sheet").classList.add("hide");go(g.dataset.go);return}
+  const cat=t.closest("[data-cat]");if(cat){gCat=cat.dataset.cat;gLimit=80;$("q").value="";go("guide");return}
+  const chip=t.closest("[data-g]");if(chip){gCat=chip.dataset.g;gLimit=80;renderGuide();return}
+  const u=t.closest("[data-u]");
+  if(u){const c=findCh(u.dataset.u);
+    const ctx=u.closest("#favList")?favs:u.closest("#recList")?recs:screen==="guide"?gView:(()=>{const row=u.closest(".row");return row?[...row.querySelectorAll("[data-u]")].map(x=>findCh(x.dataset.u)).filter(Boolean):all})();
+    play(c,ctx);return}
+  const nb=t.closest("nav button");if(nb){go(nb.dataset.s);return}
+  if(t.closest("#bPrev"))step(-1);else if(t.closest("#bNext"))step(1);
+  else if(t.closest("#bFav")){toggleFav(cur);$("bFav").classList.toggle("on",isFav(cur))}
+  else if(t.closest("#bClose"))closePlayer();
+  else if(t.closest("#bFull")){const tv=$("tv");try{if(tv.requestFullscreen)tv.requestFullscreen().then(()=>window.screen.orientation?.lock?.("landscape").catch(()=>{})).catch(()=>{});else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen()}catch(err){}}
+  else if(t.id==="sheet")$("sheet").classList.add("hide");
+});
+$("srcBtn").onclick=openSheet;
+$("heroBtn").onclick=()=>go("guide");
+$("q").oninput=()=>{gLimit=80;renderGuide()};
+$("more").onclick=()=>{gLimit+=120;renderGuide()};
+$("clrRec").onclick=()=>{recs=[];store.set("tvm-recs",recs);renderMine()};
+
+/* deslizar sobre el video para cambiar de canal */
+let sx=0,sy=0;
+$("tv").addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+$("tv").addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1)},{passive:true});
+
+/* teclado: números para ir al canal, flechas para cambiar */
+let dial="",dialT=0;
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT")return;
+  if(/^\d$/.test(e.key)){dial+=e.key;const n=$("chnum");n.textContent=dial;n.classList.add("show");clearTimeout(dialT);
+    dialT=setTimeout(()=>{const c=all.find(x=>x.num===+dial);dial="";if(c)play(c,all);else{n.classList.remove("show");toast("Ese número no existe")}},1200)}
+  else if(e.key==="ArrowUp"||e.key==="PageUp"){if(cur){e.preventDefault();step(-1)}}
+  else if(e.key==="ArrowDown"||e.key==="PageDown"){if(cur){e.preventDefault();step(1)}}
+  else if(e.key==="Escape")$("sheet").classList.add("hide");
+});
+
+if("serviceWorker"in navigator&&HTTPS)navigator.serviceWorker.register("sw.js").catch(()=>{});
+load(src);go(store.get("tvm-screen","home"));
+}
+</script>
+</body>
+</html>
