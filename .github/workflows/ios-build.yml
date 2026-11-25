@@ -8,6 +8,9 @@ on:
     paths: ["ios/**"]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Compilar, probar en simulador y empaquetar IPA
@@ -90,3 +93,28 @@ jobs:
           path: |
             capturas/
             build-*.log
+
+      - name: Publicar descarga (IPA y capturas)
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete app-ios -y --cleanup-tag || true
+          cat > notas.md <<'EOF'
+          Última compilación automática de **TV Mundo para iOS** (iPhone y iPad, iOS 16 o superior).
+
+          **TVMundo-sin-firma.ipa**: instálalo en tu iPhone con Sideloadly (Windows o Mac) o AltStore, iniciando sesión con tu Apple ID gratuito. Con un Apple ID gratuito la app dura 7 días y luego se vuelve a firmar.
+
+          Las imágenes son capturas de la app abierta en un iPhone y un iPad simulados durante la prueba automática.
+          EOF
+          gh release create app-ios TVMundo-sin-firma.ipa capturas/*.png \
+            --title "TV Mundo para iOS" --notes-file notas.md --target "$GITHUB_SHA" --latest
+
+      - name: Guardar capturas en la rama "capturas"
+        if: github.ref == 'refs/heads/main'
+        run: |
+          mkdir pub && cp capturas/*.png pub/ && cd pub
+          git init -q -b capturas
+          git -c user.name="github-actions" -c user.email="actions@github.com" add .
+          git -c user.name="github-actions" -c user.email="actions@github.com" commit -qm "Capturas del simulador ($GITHUB_SHA)"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" capturas
