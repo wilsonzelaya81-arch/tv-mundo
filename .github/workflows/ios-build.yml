@@ -10,15 +10,13 @@ on:
 
 jobs:
   build:
-    name: Compilar TVMundo (iOS 16+, sin firma)
+    name: Compilar, probar en simulador y empaquetar IPA
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Versión de Xcode
-        run: |
-          ls -d /Applications/Xcode*.app
-          xcodebuild -version
+        run: xcodebuild -version
 
       - name: Verificar que la web embebida está al día
         run: |
@@ -26,33 +24,69 @@ jobs:
             cmp -s "$f" "ios/TVMundo/Web/$f" || echo "::warning file=ios/TVMundo/Web/$f::Difiere del sitio web. Ejecuta ios/sync-web.sh"
           done
 
-      - name: Compilar para simulador (iPhone y iPad)
+      - name: Compilar para simulador (Debug)
         run: |
           set -o pipefail
-          xcodebuild \
-            -project ios/TVMundo.xcodeproj \
-            -scheme TVMundo \
-            -configuration Debug \
-            -destination 'generic/platform=iOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO \
-            build | tee build-sim.log | grep -E "error|warning:|BUILD" || true
+          xcodebuild -project ios/TVMundo.xcodeproj -scheme TVMundo -configuration Debug \
+            -sdk iphonesimulator -derivedDataPath build/sim \
+            CODE_SIGNING_ALLOWED=NO build | tee build-sim.log | grep -E "error|warning:|BUILD" || true
           grep -q "BUILD SUCCEEDED" build-sim.log
 
       - name: Compilar Release para dispositivo (sin firma)
         run: |
           set -o pipefail
-          xcodebuild \
-            -project ios/TVMundo.xcodeproj \
-            -scheme TVMundo \
-            -configuration Release \
-            -destination 'generic/platform=iOS' \
+          xcodebuild -project ios/TVMundo.xcodeproj -scheme TVMundo -configuration Release \
+            -destination 'generic/platform=iOS' -derivedDataPath build/device \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             build | tee build-device.log | grep -E "error|warning:|BUILD" || true
           grep -q "BUILD SUCCEEDED" build-device.log
 
-      - name: Guardar registros
+      - name: Empaquetar IPA sin firma
+        run: |
+          APP=build/device/Build/Products/Release-iphoneos/TVMundo.app
+          test -d "$APP"
+          mkdir -p ipa/Payload
+          cp -R "$APP" ipa/Payload/
+          (cd ipa && zip -qry ../TVMundo-sin-firma.ipa Payload)
+          ls -lh TVMundo-sin-firma.ipa
+
+      - name: Probar en simulador de iPhone y iPad
+        run: |
+          APP=build/sim/Build/Products/Debug-iphonesimulator/TVMundo.app
+          mkdir -p capturas
+          pick() { xcrun simctl list devices available -j | python3 -c "
+          import json,sys
+          d=json.load(sys.stdin)['devices']
+          c=[(rt,x) for rt,l in d.items() if 'iOS' in rt for x in l if x['name'].startswith('$1')]
+          c.sort(key=lambda t:t[0]); print(c[-1][1]['udid'])"; }
+          for kind in iPhone iPad; do
+            UDID=$(pick $kind)
+            echo "== $kind $UDID"
+            xcrun simctl boot "$UDID"
+            xcrun simctl bootstatus "$UDID" -b
+            xcrun simctl install "$UDID" "$APP"
+            xcrun simctl launch "$UDID" com.wilsonzelaya.tvmundo
+            sleep 1
+            xcrun simctl io "$UDID" screenshot "capturas/$kind-1-carga.png"
+            sleep 25
+            xcrun simctl io "$UDID" screenshot "capturas/$kind-2-inicio.png"
+            # La app debe seguir viva (sin cierres)
+            xcrun simctl spawn "$UDID" launchctl list | grep -q tvmundo && echo "$kind: la app sigue abierta"
+            xcrun simctl shutdown "$UDID"
+          done
+          ls -l capturas
+
+      - name: Guardar IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: TVMundo-ipa
+          path: TVMundo-sin-firma.ipa
+
+      - name: Guardar capturas y registros
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: build-logs
-          path: build-*.log
+          name: capturas-y-registros
+          path: |
+            capturas/
+            build-*.log
